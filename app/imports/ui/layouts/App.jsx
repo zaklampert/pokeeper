@@ -2,7 +2,6 @@ import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session'; // XXX: SESSION
-import { Lists } from '../../api/lists/lists.js';
 import UserMenu from '../components/UserMenu.jsx';
 import GamesList from '../components/GamesList.jsx';
 import LanguageToggle from '../components/LanguageToggle.jsx';
@@ -12,6 +11,8 @@ import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/svg-icons/navigation/menu';
 import MainNavigation from '../components/MainNavigation';
 import AuthPageSignIn from '../pages/AuthPageSignIn';
+import IconButton from 'material-ui/IconButton';
+import ActionMenu from 'material-ui/svg-icons/navigation/menu';
 
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
@@ -34,11 +35,17 @@ export default class App extends React.Component {
     }, CONNECTION_ISSUE_TIMEOUT);
   }
 
-  componentWillReceiveProps({ loading, children }) {
-    // redirect / to a list once lists are ready
-    if (!loading && !children) {
-      // const game = Lists.findOne();
-      // this.context.router.replace(`/lists/${list._id}`);
+  componentWillReceiveProps({ loading, children, userId, location }) {
+    // // redirect / to a list once lists are ready
+    // if (!loading && !children ) {
+    //   // const game = Lists.findOne();
+    const { router } = this.context;
+    if(location.pathname === "/") {
+      if (!userId) {
+        router.replace(`/welcome`);
+      } else {
+        router.replace(`/dashboard`);
+      }
     }
   }
 
@@ -48,15 +55,6 @@ export default class App extends React.Component {
 
   logout() {
     Meteor.logout();
-
-    // if we are on a private list, we'll need to go to a public one
-    if (this.props.params.id) {
-      const list = Lists.findOne(this.props.params.id);
-      if (list.userId) {
-        const publicList = Lists.findOne({ userId: { $exists: false } });
-        this.context.router.push(`/lists/${publicList._id}`);
-      }
-    }
   }
 
   render() {
@@ -81,41 +79,16 @@ export default class App extends React.Component {
     });
 
     return (
-      <div id="container" className={menuOpen ? 'menu-open' : ''}>
-        <AppBar
-          style={{position: 'fixed', top:'0',left:'0',zIndex:'2'}}
-          title="Pokeeper"
-          onLeftIconButtonTouchTap={()=>{
-            this.setState({
-              menuOpen: !this.state.menuOpen
-            });
-          }}
-        />
-        <MainNavigation
-            open={this.state.menuOpen}
-            onRequestChange={(open)=>{
-              this.setState({
-                menuOpen: open
-              })
-            }}
-            games={games}
-            user={user}
-          />
+      <div id="container" className={menuOpen ? 'menu-open' : ''} style={{}}>
 
         {showConnectionIssue && !connected
           ? <ConnectionNotification />
           : null}
         <div className="content-overlay" onClick={closeMenu} />
         <div id="content-container">
-          <ReactCSSTransitionGroup
-            transitionName="fade"
-            transitionEnterTimeout={200}
-            transitionLeaveTimeout={200}
-          >
             {loading
               ? <Loading key="loading" />
               : clonedChildren}
-          </ReactCSSTransitionGroup>
         </div>
       </div>
     );

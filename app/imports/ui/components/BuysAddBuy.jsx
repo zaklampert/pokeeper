@@ -40,7 +40,8 @@ class BuysAddBuy extends React.Component {
         amount,
         method,
         gameId: game._id
-      }, ()=>{
+      }, (res)=>{
+        console.log(res);
         this.setState({
           player: null,
           amount: '',
@@ -94,7 +95,8 @@ class BuysAddBuy extends React.Component {
   }
 
   render() {
-    const { game } = this.props;
+    const { game, friends } = this.props;
+    console.log(friends);
     const { player } = this.state;
     if (player) {
       return (
@@ -133,6 +135,8 @@ class BuysAddBuy extends React.Component {
            floatingLabelText="Player"
            fullWidth={true}
          />
+    
+         <h2>Players In Game</h2>
          <div style={styles.wrapper}>
          {game.playersInGame().map(player=>(
            <Chip onTouchTap={()=>this.setState({player})} key={player._id} style={styles.chip}>
@@ -140,20 +144,19 @@ class BuysAddBuy extends React.Component {
            </Chip>
          ))}
          </div>
-         {/*
 
-
-
-          <div onClick={this._toggleAddNewPlayer}>
-            Add New:
-            <form onClick={this._handleAddNewPlayerFormSubmit}>
-
-              <input placeholder="Player Name" name="name" ref={(c) => { this.name = c; }}/>
-              <button type="submit">Add</button>
-            </form>
+         {friends.length > 0 && <div>
+            <h2>Friends from previous games</h2>
+          <div style={styles.wrapper}>  
+            {friends.map(player => (
+              <Chip onTouchTap={()=>this.setState({player})} key={player._id} style={styles.chip}>
+                {player.name}
+              </Chip>
+            ))}
           </div>
-          */}
-
+          </div>
+         }
+ 
 
       </div>
     )

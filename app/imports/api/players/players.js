@@ -8,20 +8,17 @@ import { Cashes } from '../cashes/cashes.js';
 
 class PlayersCollection extends Mongo.Collection {
   insert(player, callback) {
+    console.log(player);
     const doc = {
       createdAt: new Date(),
       name: player.name,
       userId: player.userId || null
     }
 
-    return super.insert(doc, callback);
-    // //we want to add the player to the current game on insertdb.
-    // Games.update({_id: player.gameId}, {$addToSet: {players: result}})
-    //
-    // //we also want to add the player to the current user's friends list
-    // Meteor.users.update({_id: Meteor.userId()}, {$addToSet: {'profile.friends': result}});
-    //
-    // return callback(result);
+
+    const result = super.insert(doc, callback);
+    Meteor.users.update({_id: Meteor.userId()}, {$addToSet: {'profile.friends': result}});
+    return result;
 
   }
   remove(selector, callback) {
@@ -58,11 +55,18 @@ Players.publicFields = {
 Factory.define('player', Players, {});
 
 Players.helpers({
-  user(){
-    return Meteor.users.findOne({_id: this.userId});
+  user(id){
+    return Meteor.users.findOne({_id: id});
   },
   buysInGame(gameId) {
     return Buys.find({gameId, playerId: this._id});
+  },
+  // friends(){
+  //   return Meteor.users.find({_id: {$in: }})
+  // },
+  notInGame(gameId) {
+    const game = Game.findOne({_id: gameId});
+    console.log(game.playersInGame()); 
   },
   cashesInGame(gameId) {
     return Cashes.find({gameId, playerId: this._id});

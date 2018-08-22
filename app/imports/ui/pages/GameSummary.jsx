@@ -5,10 +5,23 @@ import { cashify } from '../helpers/formatting.js';
 import moment from 'moment';
 
 export default class GameSummary extends React.Component {
+  _playerBalance(player){
+    const { game } = this.props;
+    const buys = player.buysInGame(this.props.game._id).fetch()
+    console.log(buys)
+    const cashes = player.cashesInGame(this.props.game._id).fetch()
+    const totalBuys = (buys && buys.length > 0) ? buys.reduce((prev, curr)=>{
+      return prev + curr.amount;
+    }, 0) : 0;
+    const totalCashes = (cashes && cashes.length > 0) ? cashes.reduce((prev, curr)=>{
+      return prev + curr.amount;
+    }, 0) : 0;
 
+    return (totalBuys * -1) + totalCashes
+  }
   render() {
     const {players, game} = this.props;
-
+    console.log(players);
     let PlayersInGame;
     if(!players || !players.length) {
       PlayersInGame = (
@@ -16,70 +29,9 @@ export default class GameSummary extends React.Component {
       )
     } else {
       PlayersInGame = players.map(player=>(
-        <Card key={player._id} style={{marginBottom: '20px'}}>
-        <CardHeader
-          title={player.name}
-        />
-        <CardText>
-
-        <Table>
-          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-            <TableRow>
-              <TableHeaderColumn colSpan="2" style={{textAlign: 'center'}}>
-                Buys
-              </TableHeaderColumn>
-            </TableRow>
-            <TableRow>
-              <TableHeaderColumn>
-                Amount
-              </TableHeaderColumn>
-              <TableHeaderColumn>
-                Method
-              </TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody displayRowCheckbox={false} adjustForCheckbox={false}>
-          {player.buysInGame(game._id).map(buy=>{
-            return (
-              <TableRow key={buy._id}>
-                <TableRowColumn>{cashify(buy.amount)}</TableRowColumn>
-                <TableRowColumn>{buy.method}</TableRowColumn>
-              </TableRow>
-            );
-          })}
-          </TableBody>
-        </Table>
-
-        <Table>
-          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-            <TableRow>
-              <TableHeaderColumn colSpan="2" style={{textAlign: 'center'}}>
-                Cashes
-              </TableHeaderColumn>
-            </TableRow>
-            <TableRow>
-              <TableHeaderColumn>
-                Amount
-              </TableHeaderColumn>
-              <TableHeaderColumn>
-                Method
-              </TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody displayRowCheckbox={false} adjustForCheckbox={false}>
-          {player.cashesInGame(game._id).map(buy=>{
-            return (
-              <TableRow key={buy._id}>
-                <TableRowColumn>{cashify(buy.amount)}</TableRowColumn>
-                <TableRowColumn>{buy.method}</TableRowColumn>
-              </TableRow>
-            );
-          })}
-          </TableBody>
-        </Table>
-        </CardText>
-
-        </Card>
+        <div key={player._id}>
+          {player.name}: {this._playerBalance(player)}
+        </div>
 
       ))
     }

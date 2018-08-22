@@ -2,9 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Factory } from 'meteor/factory';
 import numeral from 'numeral';
-// import i18n from 'meteor/universe:i18n';
 import { Games } from '../games/games.js';
-// import { Cashes } from '../sells/sells.js';
 
 class CashesCollection extends Mongo.Collection {
   insert(cash, callback) {

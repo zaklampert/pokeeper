@@ -1,24 +1,24 @@
 import { Accounts } from 'meteor/accounts-base';
 
 
-Accounts.emailTemplates.siteName = 'Meteor Guide Todos Example';
-Accounts.emailTemplates.from = 'Meteor Todos Accounts <accounts@example.com>';
+Accounts.emailTemplates.siteName = 'Pokeeper';
+Accounts.emailTemplates.from = 'Zak <zaklampert@gmail.com>';
 
 Accounts.emailTemplates.resetPassword = {
   subject() {
-    return 'Reset your password on Meteor Todos';
+    return 'Reset your password on Pokeeper';
   },
   text(user, url) {
     return `Hello!
 
-Click the link below to reset your password on Meteor Todos.
+Click the link below to reset your password on Pokeeper.
 
 ${url}
 
 If you didn't request this email, please ignore it.
 
 Thanks,
-The Meteor Todos team
+The Pokeeper team
 `;
   },
 //   html(user, url) {

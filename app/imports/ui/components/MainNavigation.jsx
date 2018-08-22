@@ -1,5 +1,5 @@
 import React from 'react';
-import Meteor from 'meteor/meteor';
+import { Meteor } from 'meteor/meteor';
 
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -16,6 +16,8 @@ export default class MainNavigation extends React.Component {
   }
   _createNewGame() {
     const { router } = this.context;
+    const { onRequestChange } = this.props;
+
     const gameId = insert.call((err) => {
       if (err) {
         router.push('/');
@@ -25,6 +27,7 @@ export default class MainNavigation extends React.Component {
       }
     });
     router.push(`/games/${gameId}`);
+    onRequestChange(false);
   }
   render(){
     const {open, onRequestChange, games} = this.props;
@@ -45,15 +48,23 @@ export default class MainNavigation extends React.Component {
         open={open}
         onRequestChange={onRequestChange}
         >
-          <MenuItem onTouchTap={this._createNewGame}>
-            New Game
+          <MenuItem onTouchTap={()=>{
+            onRequestChange(false);
+            router.push(`/dashboard`);
+          }}>
+            Dashboard
           </MenuItem>
-          <MenuItem primaryText={"My Games"}  rightIcon={<ArrowDropRight />} menuItems={gameMenuItems}>
+            <MenuItem onTouchTap={this._createNewGame}>
+              New Game
+            </MenuItem>
+            <MenuItem primaryText={"My Games"}  rightIcon={<ArrowDropRight />} menuItems={gameMenuItems}>
 
-          </MenuItem>
+            </MenuItem>
+
          <MenuItem onTouchTap={()=>{
            Meteor.logout();
-           router.push(`/signin`);
+           onRequestChange(false);
+           router.push(`/welcome`);
          }}>Logout</MenuItem>
      </Drawer>
     )

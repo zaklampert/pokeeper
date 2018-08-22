@@ -16,6 +16,9 @@ import GameSummary from '../../ui/pages/GameSummary.jsx';
 import BuysAddBuy from '../../ui/components/BuysAddBuy.jsx';
 import CashesCashPlayer from '../../ui/components/CashesCashPlayer.jsx';
 
+import Welcome from '../../ui/pages/Welcome.jsx';
+
+import DashboardContainer from '../../ui/containers/DashboardContainer.jsx';
 
 
 injectTapEventPlugin();
@@ -26,9 +29,11 @@ export const renderRoutes = () => (
   <MuiThemeProvider>
     <Router history={browserHistory}>
       <Route path="/" component={AppContainer}>
+        <Route path ="welcome" component={Welcome} />
         <Route path="games/:id" component={GamePageContainer} />
         <Route path="signin" component={AuthPageSignIn} />
         <Route path="join" component={AuthPageJoin} />
+        <Route path="dashboard" component={DashboardContainer} />
         <Route path="*" component={NotFoundPage} />
       </Route>
     </Router>

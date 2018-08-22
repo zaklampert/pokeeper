@@ -10,6 +10,25 @@ const LIST_ID_ONLY = new SimpleSchema({
   listId: { type: String },
 }).validator();
 
+export const lookup = new ValidatedMethod({
+  name: 'games.lookup',
+  validate: new SimpleSchema({
+    code: {
+      type: String,
+    }
+  }).validator({clean: true}),
+  run({code}) {
+    if (Meteor.isServer){
+      const game = Games.findOne({code: code.toUpperCase()})
+      console.log(game);
+      if (game) {
+        return game._id
+      }
+      throw new Meteor.Error("Game not found.")
+    }
+  }
+})
+
 export const insert = new ValidatedMethod({
   name: 'games.insert',
   validate: new SimpleSchema({
@@ -131,6 +150,7 @@ export const addPlayerToGame = new ValidatedMethod({
 // Get list of all method names on Lists
 const GAMES_METHODS = _.pluck([
   insert,
+  lookup,
   // makePublic,
   // makePrivate,
   // updateName,

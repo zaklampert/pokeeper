@@ -33,10 +33,10 @@ export const insert = new ValidatedMethod({
 
     if (!Players.findOne({_id: player})){
        playerId = Players.insert({name: player})
-       Games.update({_id: gameId}, {$addToSet: {players: playerId}});
     } else {
       playerId = player;
     }
+    Games.update({_id: gameId}, {$addToSet: {players: playerId}});
 
     const buy = {
       playerId,

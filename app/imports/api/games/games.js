@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Factory } from 'meteor/factory';
@@ -13,7 +14,8 @@ class GamesCollection extends Mongo.Collection {
     const game = {
       createdAt: new Date(),
       owner: Meteor.userId(),
-      players: []
+      players: [],
+      code: Random.id(4).toUpperCase(),
     };
 
     return super.insert(game, callback);
@@ -41,7 +43,8 @@ Games.schema = new SimpleSchema({
   balance: { type: Number, optional: true, decimal: true },
   createdAt: {type: Date, denyUpdate: true},
   owner: { type: String, regEx: SimpleSchema.RegEx.Id, optional: false },
-  players: { type: [String], optional: false}
+  players: { type: [String], optional: false},
+  code: {type: String, optional: false},
 });
 
 Games.attachSchema(Games.schema);
@@ -54,7 +57,8 @@ Games.publicFields = {
   createdAt: 1,
   balance: 1,
   description: 1,
-  players: 1
+  players: 1,
+  key: 1,
 };
 
 Factory.define('game', Games, {});
@@ -69,5 +73,9 @@ Games.helpers({
   // NOTE: you can't call a helper function the name of an object key, duh.
   playersInGame() {
     return Players.find({_id: {$in: this.players}});
+  },
+  friendsNotInGame() {
+    // const friends = Meteor.user().profile.friends;
+    return Players.find({_id: {$nin: this.players}});
   }
 });

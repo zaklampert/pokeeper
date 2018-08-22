@@ -1,5 +1,7 @@
 import React from 'react';
 import i18n from 'meteor/universe:i18n';
+import { Meteor } from 'meteor/meteor'
+import {Link } from 'react-router'
 import numeral from 'numeral';
 import FontIcon from 'material-ui/FontIcon';
 import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
@@ -54,7 +56,7 @@ export default class GamePage extends BaseComponent {
 
 
   render() {
-    const { game, gameExists, loading, buys, players, children } = this.props;
+    const { game, gameExists, loading, buys, players, children, friends } = this.props;
 
 
     if (!gameExists) {
@@ -62,8 +64,19 @@ export default class GamePage extends BaseComponent {
     }
 
     return(
-      <div style={{padding: '30px', margin:'40px 0'}}>
-      <h1>Game Balance:   {(game.balance) ? cashify(game.balance) : null}</h1>
+      <div style={{padding: '30px', margin:'20px 0'}}>
+       <div id="left" style={{
+        position: 'absolute',
+        top: '10px',
+        left: '10px'
+      }}>
+      <Link to={'/dashboard'}>Dashboard</Link> | 
+      <span onClick={()=>Meteor.logout()}>Logout</span> </div>
+      <div id="balance" style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px'
+      }}>{(game.balance) ? cashify(game.balance) : null}</div>
         {(()=>{
           switch(this.state.selectedIndex){
             case 0:
@@ -71,7 +84,7 @@ export default class GamePage extends BaseComponent {
               return <GameSummary game={game} players={players}/>
               break;
             case 1:
-              return <BuysAddBuy game={game} players={players}/>
+              return <BuysAddBuy game={game} players={players} friends={friends}/>
               break;
             case 2:
               return <CashesCashPlayer game={game} players={players}/>
